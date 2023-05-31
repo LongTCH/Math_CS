@@ -3,53 +3,15 @@
 #include <cmath>
 #include <algorithm>
 #include <limits>
+#include "Point.h"
 using namespace std;
-class Point
-{
-public:
-    double x, y;
-    Point(double newx = 0, double newy = 0)
-    {
-        x = newx;
-        y = newy;
-    }
-    /*
-        Overloaded == operator to check for equality between 2 objects of class Point
-    */
-    friend bool operator==(const Point &p1, const Point &p2)
-    {
-        return (p1.x == p2.x && p1.y == p2.y);
-    }
-    /*
-        Overloaded != operator to check for non-equality between 2 objects of class Point
-    */
-    friend bool operator!=(const Point &p1, const Point &p2)
-    {
-        return (!(p1.x == p2.x && p1.y == p2.y));
-    }
-    /*
-        Overloaded ostream << operator to check for print object of class Point to STDOUT
-    */
-    friend ostream &operator<<(ostream &output, const Point &p)
-    {
-        output << "(" << p.x << ", " << p.y << ")";
-        return output;
-    }
-};
 
 bool compare_y(const Point &p1, const Point &p2)
 {
     return p1.y < p2.y;
 }
 
-double distance(const Point &p1, const Point &p2)
-{
-    double dx = p1.x - p2.x;
-    double dy = p1.y - p2.y;
-    return sqrt(dx * dx + dy * dy);
-}
-
-pair<Point, Point> brute_force(const vector<Point> &points, int start, int end)
+pair<Point, Point> brute_force(vector<Point> &points, int start, int end)
 {
     pair<Point, Point> closest;
     double min_distance = numeric_limits<double>::infinity();
@@ -57,7 +19,7 @@ pair<Point, Point> brute_force(const vector<Point> &points, int start, int end)
     {
         for (int j = i + 1; j < end; ++j)
         {
-            double d = distance(points[i], points[j]);
+            double d = points[i].distanceTo(points[j]);
             if (d < min_distance)
             {
                 min_distance = d;
@@ -68,7 +30,7 @@ pair<Point, Point> brute_force(const vector<Point> &points, int start, int end)
     return closest;
 }
 
-pair<Point, Point> closest_pair_helper(const vector<Point> &points, int start, int end)
+pair<Point, Point> closest_pair_helper(vector<Point> &points, int start, int end)
 {
     int n = end - start;
     if (n <= 3)
@@ -85,10 +47,10 @@ pair<Point, Point> closest_pair_helper(const vector<Point> &points, int start, i
                                      ? make_pair(left_pair.second, right_pair.first)
                                  : right_pair.first == mid_point
                                      ? make_pair(left_pair.first, right_pair.second)
-                                 : distance(left_pair.first, left_pair.second) < distance(right_pair.first, right_pair.second)
+                                 : left_pair.first.distanceTo(left_pair.second) < right_pair.first.distanceTo(right_pair.second)
                                      ? left_pair
                                      : right_pair;
-    double min_distance = distance(closest.first, closest.second);
+    double min_distance = closest.first.distanceTo(closest.second);
     vector<Point> strip;
     for (int i = start; i < end; ++i)
     {
@@ -102,7 +64,7 @@ pair<Point, Point> closest_pair_helper(const vector<Point> &points, int start, i
     {
         for (int j = i + 1; j < strip.size() && strip[j].y - strip[i].y < min_distance; ++j)
         {
-            double d = distance(strip[i], strip[j]);
+            double d = strip[i].distanceTo(strip[j]);
             if (d < min_distance)
             {
                 min_distance = d;

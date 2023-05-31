@@ -1,29 +1,11 @@
 // Scanning
 #include <iostream>
 #include <stack>
+#include <math.h>
 #include <stdlib.h>
 #include <vector>
+#include "Point.h"
 using namespace std;
-
-class Point
-{
-public:
-    double x, y;
-    Point(double newx = 0, double newy = 0)
-    {
-        x = newx;
-        y = newy;
-    }
-    // bool operator<(const Point &other) const
-    // {
-    //     return x < other.x || (x == other.x && y < other.y);
-    // }
-    friend std::ostream &operator<<(std::ostream &os, const Point &p)
-    {
-        os << "(" << p.x << ", " << p.y << ")";
-        return os;
-    }
-};
 
 // A global point needed for sorting points with reference
 // to the first point Used in compare function of qsort()
@@ -39,50 +21,19 @@ Point nextToTop(stack<Point> &S)
     return res;
 }
 
-// A utility function to swap two points
-void swap(Point &p1, Point &p2)
-{
-    Point temp = p1;
-    p1 = p2;
-    p2 = temp;
-}
-
-// A utility function to return square of distance
-// between p1 and p2
-int distSq(Point p1, Point p2)
-{
-    return (p1.x - p2.x) * (p1.x - p2.x) +
-           (p1.y - p2.y) * (p1.y - p2.y);
-}
-
-// To find orientation of ordered triplet (p, q, r).
-// The function returns following values
-// 0 --> p, q and r are collinear
-// 1 --> Clockwise
-// 2 --> Counterclockwise
-int orientation(Point p, Point q, Point r)
-{
-    int val = (q.y - p.y) * (r.x - q.x) -
-              (q.x - p.x) * (r.y - q.y);
-
-    if (val == 0)
-        return 0;             // collinear
-    return (val > 0) ? 1 : 2; // clock or counterclock wise
-}
-
-// A function used by library function qsort() to sort an array of
-// points with respect to the first point
+/*
+    Predicate function used while sorting the points using qsort() inbuilt function in C++
+    @param p: Object of class Point aka first Point
+    @param p: Object of class Point aka second Point
+*/
 int compare(const void *vp1, const void *vp2)
 {
     Point *p1 = (Point *)vp1;
     Point *p2 = (Point *)vp2;
-
-    // Find orientation
-    int o = orientation(p0, *p1, *p2);
-    if (o == 0)
-        return (distSq(p0, *p2) >= distSq(p0, *p1)) ? -1 : 1;
-
-    return (o == 2) ? -1 : 1;
+    int orient = orientation(p0, *p1, *p2);
+    if (orient == 0)
+        return (p0.distanceTo(*p2) >= p0.distanceTo(*p1)) ? -1 : 1;
+    return (orient == 1) ? -1 : 1;
 }
 
 // Prints convex hull of a set of n points.
@@ -148,7 +99,7 @@ void convexHull(vector<Point> points)
         // Keep removing top while the angle formed by
         // points next-to-top, top, and points[i] makes
         // a non-left turn
-        while (S.size() > 1 && orientation(nextToTop(S), S.top(), points[i]) != 2)
+        while (S.size() > 1 && orientation(nextToTop(S), S.top(), points[i]) != 1)
             S.pop();
         S.push(points[i]);
     }

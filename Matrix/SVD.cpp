@@ -147,14 +147,14 @@ vector<Matrix> SVDDecompose(Matrix A)
 	Matrix AT = Tranpose(A);
 	Matrix P = AT * A;
 	vector<Matrix> Holder = EigenDecompose(P);
-	// cout << "Matrix AT:" << endl;
-	// Print(AT);
-	// cout << "Matrix AT * A:" << endl;
-	// Print(P);
-	// cout << "Eigen Values" << endl;
-	// PrintValue(Holder[1]);
-	// cout << "Eigen Vector" << endl;
-	// Print(Holder[0]);
+	cout << "Matrix AT:" << endl;
+	Print(AT);
+	cout << "Matrix AT * A:" << endl;
+	Print(P);
+	cout << "Eigen Values" << endl;
+	PrintValue(Holder[1]);
+	cout << "Eigen Vector" << endl;
+	Print(Holder[0]);
 	Matrix V = Holder[0];
 	Matrix D(A.size(), Vector(A[0].size()));
 	for (int i = 0; i < min(Holder[1].size(), D.size()); i++)
@@ -194,7 +194,7 @@ vector<Matrix> SVDDecompose(Matrix A)
 int main()
 {
 	cout << fixed << setprecision(5);
-	Matrix A = {{9, 11, 15}, {8, 8, 8}, {15, 11, 9}};
+	Matrix A = {{1, 1}, {0, 1}, {-1, 1}};
 	cout << "Matrix A:" << endl;
 	Print(A);
 	vector<Matrix> SVD = SVDDecompose(A);
@@ -208,3 +208,9 @@ int main()
 	Print(SVD[0] * SVD[1] * SVD[2]);
 	return 0;
 }
+/*
+Để phân rã một ma trận A thành tích ba ma trận U, Σ và V^T, ta cần thực hiện các bước sau:
+1. Tính A^T A: Tính ma trận A^T A có kích thước n x n, trong đó n là số cột của A. Đây là bước tính toán đầu tiên và có độ phức tạp O(n^2 m).
+2. Tính phép phân rã trực giao cho ma trận A^T A: Sử dụng một thuật toán phân rã trực giao như phép phân rã QR hoặc phương pháp lặp (power iteration) để tính ma trận trực giao V có kích thước n x n và ma trận đường chéo Sigma có kích thước n x n. Độ phức tạp của bước này phụ thuộc vào thuật toán phân rã trực giao được sử dụng, nhưng thường là O(n^3).
+3. Tính ma trận U: Sử dụng các thông tin từ bước 2 để tính ma trận U. Nếu ta muốn tính toán tất cả các cột của U, thì ta thực hiện tính toán u_i = (1/sigma_i) * A * v_i với i = 1,2,…,n, trong đó v_i là cột thứ i của ma trận V, sigma_i là phần tử trên đường chéo thứ i của ma trận Sigma, và u_i là cột thứ i của ma trận U. Độ phức tạp của bước này là O(n^2 m). Kết quả: Sau khi tính được ma trận U, Sigma, và V, ta có thể viết lại ma trận A dưới dạng tích của ba ma trận này: A = U * Sigma * V^T. Tổng độ phức tạp của phân rã SVD là O(n^3), do bước tính ma trận A^T A và bước tính ma trận U có độ phức tạp cao nhất.
+*/

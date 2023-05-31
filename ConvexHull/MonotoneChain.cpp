@@ -2,27 +2,9 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <math.h>
+#include "Point.h"
 using namespace std;
-
-class Point
-{
-public:
-    double x, y;
-    Point(double newx = 0, double newy = 0)
-    {
-        x = newx;
-        y = newy;
-    }
-    bool operator<(const Point &other) const
-    {
-        return x < other.x || (x == other.x && y < other.y);
-    }
-    friend std::ostream &operator<<(std::ostream &os, const Point &p)
-    {
-        os << "(" << p.x << ", " << p.y << ")";
-        return os;
-    }
-};
 
 // Cross product of two vectors OA and OB
 // returns positive for counter clockwise
@@ -77,15 +59,13 @@ vector<Point> convex_hull(vector<Point> A)
 
     return ans;
 }
-
 // Driver code
 int main()
 {
-    vector<Point> points = {{0, 3.3}, {2, 2}, {1, 1}, {2, 1}, {3, 0}, {0, 0}, {3, 3}};
+    vector<Point> points = {{6, 7}, {8, 6}, {9, 8}, {10, 9}, {11, 10}, {7, 12}, {6, 11}, {7, 11}, {10, 13}, {10, 7}};
 
     // Find the convex hull
     vector<Point> ans = convex_hull(points);
-
     // Print the convex hull
     for (int i = 0; i < ans.size(); i++)
         cout << ans[i] << endl;

@@ -2,8 +2,9 @@
 #include <iostream>
 #include <stdlib.h>
 #include <vector>
-#include <algorithm>  // For qsort() algorithm
-#include <utility>    // For pair() STL
+#include <algorithm> // For qsort() algorithm
+#include <utility>   // For pair() STL
+#include "Point.h"
 #define RIGHT_TURN -1 // CW
 #define LEFT_TURN 1   // CCW
 #define COLLINEAR 0   // Collinear
@@ -11,65 +12,7 @@ using namespace std;
 /*
 Class to h&&le the 2D points!
 */
-class Point
-{
-public:
-    double x, y;
-    Point(double newx = 0, double newy = 0)
-    {
-        x = newx;
-        y = newy;
-    }
-    /*
-        Overloaded == operator to check for equality between 2 objects of class Point
-    */
-    friend bool operator==(const Point &p1, const Point &p2)
-    {
-        return (p1.x == p2.x && p1.y == p2.y);
-    }
-    /*
-        Overloaded != operator to check for non-equality between 2 objects of class Point
-    */
-    friend bool operator!=(const Point &p1, const Point &p2)
-    {
-        return (!(p1.x == p2.x && p1.y == p2.y));
-    }
-    /*
-        Overloaded ostream << operator to check for print object of class Point to STDOUT
-    */
-    friend ostream &operator<<(ostream &output, const Point &p)
-    {
-        output << "(" << p.x << ", " << p.y << ")";
-        return output;
-    }
-} p0; // Global Point class object
-
-/*
-    Returns square of the distance between the two Point class objects
-    @param p1: Object of class Point aka first Point
-    @param p2: Object of class Point aka second Point
-*/
-int dist(Point p1, Point p2)
-{
-    return (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y);
-}
-
-/*
-    Returns orientation of the line joining points p && q && line joining points q && r
-    Returns -1 : CW orientation
-            +1 : CCW orientation
-            0 : Collinear
-    @param p: Object of class Point aka first Point
-    @param q: Object of class Point aka second Point
-    @param r: Object of class Point aka third Point
-*/
-int orientation(Point p, Point q, Point r)
-{
-    int val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
-    if (val == 0)
-        return 0;              // Collinear
-    return (val > 0) ? -1 : 1; // CW: -1 || CCW: 1
-}
+Point p0; // Global Point class object
 
 /*
     Predicate function used while sorting the points using qsort() inbuilt function in C++
@@ -82,7 +25,7 @@ int compare(const void *vp1, const void *vp2)
     Point *p2 = (Point *)vp2;
     int orient = orientation(p0, *p1, *p2);
     if (orient == 0)
-        return (dist(p0, *p2) >= dist(p0, *p1)) ? -1 : 1;
+        return (p0.distanceTo(*p2) >= p0.distanceTo(*p1)) ? -1 : 1;
     return (orient == 1) ? -1 : 1;
 }
 
@@ -160,7 +103,7 @@ pair<int, int> next_hullpt_pair(vector<vector<Point>> &hulls, pair<int, int> lpo
             Point q = hulls[next.first][next.second];
             Point r = hulls[h][s];
             int t = orientation(p, q, r);
-            if (t == RIGHT_TURN || (t == COLLINEAR) && dist(p, r) > dist(p, q))
+            if (t == RIGHT_TURN || (t == COLLINEAR) && p.distanceTo(r) > p.distanceTo(q))
                 next = make_pair(h, s);
         }
     }

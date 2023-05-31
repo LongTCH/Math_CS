@@ -132,10 +132,10 @@ Matrix MatrixPow(const Matrix &mat, int p)
 int main()
 {
     cout << fixed << setprecision(5);
-    int T = 2, s = 0, f = 0;
-    Matrix A = {{0.28, 0.72}, {0.79, 0.21}};
+    int T = 3, s = 1, f = 3;
+    Matrix A = {{0.4, 0.6, 0, 0}, {0.1, 0.3, 0.4, 0.2}, {0, 0.2, 0.8, 0}, {0, 0.4, 0.6, 0}};
     Matrix res = MatrixPow(A, T);
-    // Print(res);
+    Print(res);
     cout << "Xac xuat lon nhat sau " << T << " giai doan van hanh he thong lam viec o trang thai " << f
          << " \nbiet bat dau la trang thai " << s << " : " << res[s][f];
     return 0;

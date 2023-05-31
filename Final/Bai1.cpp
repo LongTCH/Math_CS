@@ -28,6 +28,7 @@ void primeFactors(int n)
             cout << " * ";
     }
 }
+
 void Sieve(int n)
 {
     bool sieve[100000];

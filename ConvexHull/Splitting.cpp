@@ -3,27 +3,8 @@
 #include <algorithm>
 #include <vector>
 #include <set>
+#include "Point.h"
 using namespace std;
-
-class Point
-{
-public:
-    double x, y;
-    Point(double newx = 0, double newy = 0)
-    {
-        x = newx;
-        y = newy;
-    }
-    bool operator<(const Point &other) const
-    {
-        return x < other.x || (x == other.x && y < other.y);
-    }
-    friend std::ostream &operator<<(std::ostream &os, const Point &p)
-    {
-        os << "(" << p.x << ", " << p.y << ")";
-        return os;
-    }
-};
 Point mid;
 
 // determines the quadrant of a point
@@ -38,21 +19,6 @@ int quad(Point p)
         return 3;
     return 4;
 }
-
-// Checks whether the line is crossing the polygon
-int orientation(Point a, Point b,
-                Point c)
-{
-    int res = (b.y - a.y) * (c.x - b.x) -
-              (c.y - b.y) * (b.x - a.x);
-
-    if (res == 0)
-        return 0;
-    if (res > 0)
-        return 1;
-    return -1;
-}
-
 // compare function for sorting
 bool compare(const Point &p1, const Point &q1)
 {
@@ -94,10 +60,10 @@ vector<Point> merger(vector<Point> a,
     while (!done)
     {
         done = 1;
-        while (orientation(b[indb], a[inda], a[(inda + 1) % n1]) >= 0)
+        while (orientation(b[indb], a[inda], a[(inda + 1) % n1]) <= 0)
             inda = (inda + 1) % n1;
 
-        while (orientation(a[inda], b[indb], b[(n2 + indb - 1) % n2]) <= 0)
+        while (orientation(a[inda], b[indb], b[(n2 + indb - 1) % n2]) >= 0)
         {
             indb = (n2 + indb - 1) % n2;
             done = 0;
@@ -111,10 +77,10 @@ vector<Point> merger(vector<Point> a,
     while (!done) // finding the lower tangent
     {
         done = 1;
-        while (orientation(a[inda], b[indb], b[(indb + 1) % n2]) >= 0)
+        while (orientation(a[inda], b[indb], b[(indb + 1) % n2]) <= 0)
             indb = (indb + 1) % n2;
 
-        while (orientation(b[indb], a[inda], a[(n1 + inda - 1) % n1]) <= 0)
+        while (orientation(b[indb], a[inda], a[(n1 + inda - 1) % n1]) >= 0)
         {
             inda = (n1 + inda - 1) % n1;
             done = 0;
@@ -226,22 +192,10 @@ vector<Point> divide(const vector<Point> &a)
     // merging the convex hulls
     return merger(left_hull, right_hull);
 }
-double area_polygon(const vector<Point> &vertices)
-{
-    double area = 0;
-    int n = vertices.size();
-    int j = n - 1;
-    for (int i = 0; i < n; i++)
-    {
-        area += (vertices[i].x * vertices[j].y - vertices[j].x * vertices[i].y);
-        j = i;
-    }
-    return labs(area / 2);
-}
 // Driver code
 int main()
 {
-    vector<Point> points = {{6, 7}, {8, 6}, {9, 8}, {10, 9}, {11, 10}, {7, 12}, {6, 11}, {7, 11}, {10, 13}, {10, 7}};
+    vector<Point> points = {{0, 3.3}, {2, 2}, {1, 1}, {2, 1}, {3, 0}, {0, 0}, {3, 3}};
 
     int n = points.size();
 

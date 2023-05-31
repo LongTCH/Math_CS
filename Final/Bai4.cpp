@@ -5,11 +5,15 @@
 using namespace std;
 double _f(double x)
 {
-    return pow(exp(2 * x * x + 1) - 2 * x + 1, 2) - 5 * pow(x + 1, 3);
+    return pow(exp(2 * x) - 2 * x * x - 5 * pow(x, 5), 2) + 2 * pow(x, 4);
 }
 double derivative_f_1(double x)
 {
-    return 2 * (exp(2 * x * x + 1) - 2 * x + 1) * (4 * x * exp(2 * x * x + 1) - 2) - 15 * pow(x + 1, 2);
+    return 2 * (exp(2 * x) - 2 * x * x - 5 * pow(x, 5)) * (2 * exp(2 * x) - 4 * x - 25 * pow(x, 4)) + 8 * pow(x, 3);
+}
+double fDoublePrime(double x)
+{
+    return 2 * pow(2 * exp(2 * x) - 4 * x - 25 * pow(x, 4), 2) + 2 * (exp(2 * x) - 2 * x * x - 5 * pow(x, 5)) * (4 * exp(2 * x) - 4 - 100 * pow(x, 3)) + 24 * x * x;
 }
 double gradientDescent(double startPoint, double learningRate, int Loop, double e, double (*f)(double), double (*fPrime)(double))
 {
@@ -27,6 +31,7 @@ double gradientDescent(double startPoint, double learningRate, int Loop, double 
     }
     return curr;
 }
+
 double GradientDescentMomentum(double startPoint, double alpha, double learningRate, int Loop, double epsilon, double (*f)(double), double (*fPrime)(double))
 {
     double back, curr;
@@ -48,10 +53,31 @@ double GradientDescentMomentum(double startPoint, double alpha, double learningR
     return curr;
 }
 
+double newtonMethod(double guess, int maxIterations, double epsilon, double (*f)(double), double (*fPrime)(double), double (*fDoublePrime)(double))
+{
+    double x = guess;
+
+    for (int i = 0; i < maxIterations; i++)
+    {
+        double fx = f(x);
+        double fPrimeX = fPrime(x);
+        double fDoublePrimeX = fDoublePrime(x);
+        if (fabs(fPrimeX) < epsilon)
+        {
+            break;
+        }
+        x = x - fPrimeX / fDoublePrimeX;
+    }
+
+    return x;
+}
 int main()
 {
+    double learningRate = 0.01, alpha = 0.1, x = -0.5;
     cout << "Gia tri nho nhat cua ham so su dung GD la: ";
-    cout << _f(gradientDescent(0.2, 0.01, 1000, 1e-5, _f, derivative_f_1)) << endl;
+    cout << _f(gradientDescent(x, learningRate, 1000, 1e-5, _f, derivative_f_1)) << endl;
     cout << "Gia tri nho nhat cua ham so su dung GD with Momentum la: ";
-    cout << _f(GradientDescentMomentum(0.2, 0.01, 0.01, 1000, 1e-5, _f, derivative_f_1));
+    cout << _f(GradientDescentMomentum(x, alpha, learningRate, 1000, 1e-5, _f, derivative_f_1)) << endl;
+    cout << "Gia tri nho nhat cua ham so su dung Newton Method la: ";
+    cout << _f(newtonMethod(x, 1000, 1e-5, _f, derivative_f_1, fDoublePrime));
 }
